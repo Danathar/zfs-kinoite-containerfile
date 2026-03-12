@@ -66,15 +66,16 @@ class PrepareValidationBuildTests(unittest.TestCase):
                     "ci_tools.prepare_validation_build.resolve_build_inputs",
                     return_value=resolution,
                 ):
-                    with patch(
-                        "ci_tools.prepare_validation_build.inspect_akmods_cache",
-                        return_value=AkmodsCacheStatus(
-                            source_image="ghcr.io/danathar/zfs-kinoite-containerfile-akmods:main-43",
-                            image_exists=True,
-                            missing_releases=(),
-                        ),
-                    ) as inspect_cache:
-                        main()
+                    with patch("ci_tools.prepare_validation_build.clone_pinned_akmods") as clone_pinned:
+                        with patch(
+                            "ci_tools.prepare_validation_build.inspect_akmods_cache",
+                            return_value=AkmodsCacheStatus(
+                                source_image="ghcr.io/danathar/zfs-kinoite-containerfile-akmods:main-43",
+                                image_exists=True,
+                                missing_releases=(),
+                            ),
+                        ) as inspect_cache:
+                            main()
 
             outputs = Path(output_path).read_text(encoding="utf-8")
             self.assertIn("version=43", outputs)
@@ -91,6 +92,7 @@ class PrepareValidationBuildTests(unittest.TestCase):
                 fedora_version="43",
                 kernel_releases=["6.18.13-200.fc43.x86_64", "6.18.16-200.fc43.x86_64"],
             )
+            clone_pinned.assert_called_once_with()
 
     def test_fails_closed_when_shared_cache_is_missing_or_stale(self) -> None:
         resolution = _resolved_inputs()
@@ -110,22 +112,24 @@ class PrepareValidationBuildTests(unittest.TestCase):
                     "ci_tools.prepare_validation_build.resolve_build_inputs",
                     return_value=resolution,
                 ):
-                    with patch(
-                        "ci_tools.prepare_validation_build.inspect_akmods_cache",
-                        return_value=AkmodsCacheStatus(
-                            source_image="ghcr.io/danathar/zfs-kinoite-containerfile-akmods:main-43",
-                            image_exists=True,
-                            missing_releases=("6.18.16-200.fc43.x86_64",),
-                        ),
-                    ):
-                        with self.assertRaises(CiToolError) as context:
-                            main()
+                    with patch("ci_tools.prepare_validation_build.clone_pinned_akmods") as clone_pinned:
+                        with patch(
+                            "ci_tools.prepare_validation_build.inspect_akmods_cache",
+                            return_value=AkmodsCacheStatus(
+                                source_image="ghcr.io/danathar/zfs-kinoite-containerfile-akmods:main-43",
+                                image_exists=True,
+                                missing_releases=("6.18.16-200.fc43.x86_64",),
+                            ),
+                        ):
+                            with self.assertRaises(CiToolError) as context:
+                                main()
 
             self.assertIn(
                 "ghcr.io/danathar/zfs-kinoite-containerfile-akmods:main-43",
                 str(context.exception),
             )
             self.assertIn("rebuild_akmods=true", str(context.exception))
+            clone_pinned.assert_called_once_with()
 
 
 if __name__ == "__main__":
