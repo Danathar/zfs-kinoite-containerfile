@@ -26,27 +26,29 @@ def command_map() -> dict[str, Callable[[], None]]:
     from ci_tools.akmods_clone_pinned import main as akmods_clone_pinned
     from ci_tools.akmods_configure_zfs_target import main as akmods_configure_zfs_target
     from ci_tools.check_akmods_cache import main as check_akmods_cache
-    from ci_tools.compose_branch_image_tag import main as compose_branch_image_tag
-    from ci_tools.compute_candidate_tag import main as compute_candidate_tag
-    from ci_tools.compute_branch_metadata import main as compute_branch_metadata
     from ci_tools.export_repo_defaults import main as export_repo_defaults
-    from ci_tools.export_registry_context import main as export_registry_context
     from ci_tools.prepare_validation_build import main as prepare_validation_build
     from ci_tools.promote_stable import main as promote_stable
     from ci_tools.resolve_build_inputs import main as resolve_build_inputs
     from ci_tools.sign_image import main as sign_image
+    from ci_tools.tagging_context import (
+        main_compose_branch_image_tag,
+        main_compute_branch_metadata,
+        main_compute_candidate_tag,
+        main_export_registry_context,
+    )
     from ci_tools.write_build_inputs_manifest import main as write_build_inputs_manifest
 
     return {
         "resolve-build-inputs": resolve_build_inputs,
         "write-build-inputs-manifest": write_build_inputs_manifest,
         "check-akmods-cache": check_akmods_cache,
-        "compose-branch-image-tag": compose_branch_image_tag,
-        "compute-candidate-tag": compute_candidate_tag,
+        "compose-branch-image-tag": main_compose_branch_image_tag,
+        "compute-candidate-tag": main_compute_candidate_tag,
         "export-repo-defaults": export_repo_defaults,
-        "export-registry-context": export_registry_context,
+        "export-registry-context": main_export_registry_context,
         "prepare-validation-build": prepare_validation_build,
-        "compute-branch-metadata": compute_branch_metadata,
+        "compute-branch-metadata": main_compute_branch_metadata,
         "promote-stable": promote_stable,
         "sign-image": sign_image,
         "akmods-clone-pinned": akmods_clone_pinned,
