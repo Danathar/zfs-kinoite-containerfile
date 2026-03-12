@@ -24,6 +24,7 @@ env:
   DEFAULT_BUILD_CONTAINER_IMAGE: ghcr.io/ublue-os/devcontainer:latest
   DEFAULT_BREW_IMAGE: ghcr.io/ublue-os/brew:latest
   DEFAULT_ZFS_MINOR_VERSION: "2.4"
+  HAS_SIGNING_SECRET: ${{ secrets.SIGNING_SECRET != '' }}
 
 jobs:
   prepare-branch-metadata:
@@ -113,16 +114,19 @@ jobs:
           password: ${{ env.REGISTRY_PASSWORD }}
 
       - name: Install skopeo and cosign for signature upload
+        if: env.HAS_SIGNING_SECRET == 'true'
         shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install -y skopeo
 
       - uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad
+        if: env.HAS_SIGNING_SECRET == 'true'
         with:
           cosign-release: v2.6.1
 
       - name: Sign branch image digest
+        if: env.HAS_SIGNING_SECRET == 'true'
         shell: bash
         env:
           IMAGE_ORG: ${{ env.IMAGE_ORG }}
