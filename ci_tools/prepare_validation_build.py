@@ -8,6 +8,7 @@ Goal: Keep one shared preparation command for non-main workflows instead of dupl
 
 from __future__ import annotations
 
+from ci_tools.akmods_clone_pinned import main as clone_pinned_akmods
 from ci_tools.check_akmods_cache import inspect_akmods_cache
 from ci_tools.common import CiToolError, normalize_owner, require_env
 from ci_tools.resolve_build_inputs import resolve_build_inputs, write_resolved_build_outputs
@@ -38,6 +39,12 @@ def main() -> None:
     resolution = resolve_build_inputs()
     inputs = resolution.inputs
     write_resolved_build_outputs(inputs)
+
+    # Validation builds usually reuse the shared akmods cache, so without this
+    # explicit clone they would never prove that the pinned akmods fork commit is
+    # still fetchable. Running the same clone/verify step here keeps branch and
+    # PR paths honest with the main schedule/rebuild path.
+    clone_pinned_akmods()
 
     status = inspect_akmods_cache(
         image_org=image_org,

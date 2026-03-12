@@ -141,8 +141,7 @@ jobs:
         run: |
           python3 -m ci_tools.cli publish-akmods-cache-metadata
 
-      - name: Clone upstream akmods tooling
-        if: github.event_name == 'schedule' || github.event.inputs.rebuild_akmods == 'true' || steps.cache.outputs.exists != 'true'
+      - name: Clone pinned upstream akmods tooling
         shell: bash
         env:
           AKMODS_UPSTREAM_REPO: ${{ steps.defaults.outputs.akmods_upstream_repo }}

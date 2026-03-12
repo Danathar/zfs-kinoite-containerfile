@@ -60,6 +60,15 @@ That check now prefers the metadata sidecar first:
 
 If any kernel is missing, rebuild is forced.
 
+Separate from cache reuse, every workflow path also clones the pinned
+`Danathar/akmods` ref once.
+
+That check exists because:
+
+1. a stale shared cache can hide a broken pin for a while
+2. branch and PR validation should still prove that the configured akmods SHA is
+   fetchable, even when they intentionally do not rebuild the cache
+
 ### 3. Build Shared Akmods Cache When Required
 
 If cache is missing/stale (or manual rebuild is requested), CI:

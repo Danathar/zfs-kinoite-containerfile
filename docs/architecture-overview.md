@@ -79,6 +79,16 @@ That check now has two layers:
 2. if that sidecar tag is missing or malformed, fall back to unpacking the full
    shared cache image and checking the RPM filenames directly
 
+Even when the shared cache is reusable, the workflows now still clone the
+pinned `Danathar/akmods` commit once per run.
+
+Why:
+
+1. a bad akmods pin can hide for a while if CI keeps reusing an old shared cache
+2. cloning the pinned ref is the cheapest way to prove that the configured SHA
+   still exists upstream
+3. this keeps branch, PR, push, and schedule paths honest with each other
+
 If yes:
 
 - reuse the cache
