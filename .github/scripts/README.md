@@ -17,12 +17,12 @@ If a term is unfamiliar, check the shared glossary first:
 | Resolve build inputs | `resolve-build-inputs` | `ci_tools.resolve_build_inputs` |
 | Write build inputs manifest | `write-build-inputs-manifest` | `ci_tools.write_build_inputs_manifest` |
 | Check shared akmods cache | `check-akmods-cache` | `ci_tools.check_akmods_cache` |
-| Export normalized registry context for later workflow steps | `export-registry-context` | `ci_tools.export_registry_context` |
+| Export normalized registry context for later workflow steps | `export-registry-context` | `ci_tools.tagging_context` |
 | Export checked-in repo defaults for workflow steps | `export-repo-defaults` | `ci_tools.export_repo_defaults` |
 | Resolve pull request (PR) and branch validation inputs and verify shared akmods cache | `prepare-validation-build` | `ci_tools.prepare_validation_build` |
-| Compute branch-safe image tag prefix | `compute-branch-metadata` | `ci_tools.compute_branch_metadata` |
-| Compose final branch image tag | `compose-branch-image-tag` | `ci_tools.compose_branch_image_tag` |
-| Compute candidate image tag | `compute-candidate-tag` | `ci_tools.compute_candidate_tag` |
+| Compute branch-safe image tag prefix | `compute-branch-metadata` | `ci_tools.tagging_context` |
+| Compose final branch image tag | `compose-branch-image-tag` | `ci_tools.tagging_context` |
+| Compute candidate image tag | `compute-candidate-tag` | `ci_tools.tagging_context` |
 | Promote candidate digest to latest and audit tags | `promote-stable` | `ci_tools.promote_stable` |
 | Sign one published image tag by digest | `sign-image` | `ci_tools.sign_image` |
 Note: branch workflows skip this step when `SIGNING_SECRET` is unavailable, which is expected for some automation actors such as Dependabot.
